@@ -5,12 +5,7 @@ services:
     image: 'postgres:17'
     environment:
       - 'POSTGRES_DB=citronix'
-      - 'POSTGRES_PASSWORD=password'
+      - 'POSTGRES_PASSWORD=citronix'
       - 'POSTGRES_USER=citronix'
-    volumes:
-      - C:/java project/pgdata:/var/lib/postgresql/data
     ports:
-      - '5433:5432'
-volumes:
-  postgres_data:
-    driver: local
+      - '5432:5432'
