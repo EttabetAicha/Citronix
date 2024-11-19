@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +33,7 @@ public class FarmService {
         return farms.stream().map(farmMapper::toDto).collect(Collectors.toList());
     }
 
-    public FarmDto getFarmById(Integer id) {
+    public FarmDto getFarmById(UUID id) {
         Farm farm = farmRepository.findById(id).orElseThrow(() -> new CustomException("Farm not found with id: " + id));
         return farmMapper.toDto(farm);
     }
@@ -58,7 +59,7 @@ public class FarmService {
         }
     }
 
-    public void deleteFarm(Integer id) {
+    public void deleteFarm(UUID id) {
         if (!farmRepository.existsById(id)) {
             throw new CustomException("Farm not found with id: " + id);
         }

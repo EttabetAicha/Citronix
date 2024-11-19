@@ -8,6 +8,7 @@ import org.aicha.citronix.domain.enums.Season;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -18,7 +19,7 @@ import java.util.List;
 public class Harvest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     @NotNull

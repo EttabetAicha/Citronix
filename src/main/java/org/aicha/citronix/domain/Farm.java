@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -18,7 +19,7 @@ import java.util.List;
 public class Farm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private UUID id;
 
     @NotNull
     @Size(min = 2, max = 100)
@@ -30,7 +31,7 @@ public class Farm {
 
     @NotNull
     private Double area;
-    @Column(name = "creationDate", nullable = false)
+    @Column(name = "creation_date", nullable = false)
     @NotNull
     private LocalDate creationDate;
 
