@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -14,7 +16,7 @@ import java.util.List;
 public class Field {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private UUID id;
 
     @NotNull
     private Double area;
@@ -25,4 +27,5 @@ public class Field {
 
     @OneToMany(mappedBy = "field", cascade = CascadeType.ALL)
     private List<Tree> trees;
+
 }

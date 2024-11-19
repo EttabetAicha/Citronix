@@ -5,24 +5,36 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.aicha.citronix.domain.Farm;
+import org.aicha.citronix.domain.Field;
 import org.aicha.citronix.dto.FarmDto;
 import org.aicha.citronix.exception.CustomException;
 import org.aicha.citronix.mapper.FarmMapper;
+import org.aicha.citronix.mapper.FieldMapper;
 import org.aicha.citronix.repository.FarmRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.aicha.citronix.repository.FieldRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class FarmService {
 
-    @Autowired
+
     private FarmRepository farmRepository;
 
-    @Autowired
+    private FieldRepository fieldRepository;
     private FarmMapper farmMapper;
+
+    private FieldMapper fieldMapper;
+
+    public FarmService(FarmRepository farmRepository, FieldRepository fieldRepository, FarmMapper farmMapper, FieldMapper fieldMapper) {
+        this.farmRepository = farmRepository;
+        this.fieldRepository = fieldRepository;
+        this.farmMapper = farmMapper;
+        this.fieldMapper = fieldMapper;
+    }
 
     public List<FarmDto> getAllFarms() {
         List<Farm> farms = farmRepository.findAll();
@@ -32,11 +44,33 @@ public class FarmService {
         return farms.stream().map(farmMapper::toDto).collect(Collectors.toList());
     }
 
-    public FarmDto getFarmById(Integer id) {
+    public FarmDto getFarmById(UUID id) {
         Farm farm = farmRepository.findById(id).orElseThrow(() -> new CustomException("Farm not found with id: " + id));
         return farmMapper.toDto(farm);
     }
-
+    public FarmDto createFarmWithFields(FarmDto farmDto) {
+        try {
+            Farm farm = farmMapper.toEntity(farmDto);
+            List<Field> fields = farmDto.getFields().stream()
+                    .map(fieldDto -> {
+                        if (fieldDto.getId() != null && fieldRepository.existsById(fieldDto.getId())) {
+                            Field existingField = fieldRepository.findById(fieldDto.getId())
+                                    .orElseThrow(() -> new CustomException("Field not found with id: " + fieldDto.getId()));
+                            existingField.setFarm(farm);
+                            return existingField;
+                        } else {
+                            Field field = fieldMapper.toEntity(fieldDto);
+                            field.setFarm(farm);
+                            return field;
+                        }
+                    })
+                    .collect(Collectors.toList());
+            farm.setFields(fields);
+            return farmMapper.toDto(farmRepository.save(farm));
+        } catch (Exception e) {
+            throw new CustomException("Failed to create farm with fields: " + e.getMessage());
+        }
+    }
     public FarmDto createFarm(FarmDto farmDto) {
         try {
             Farm farm = farmMapper.toEntity(farmDto);
@@ -58,7 +92,7 @@ public class FarmService {
         }
     }
 
-    public void deleteFarm(Integer id) {
+    public void deleteFarm(UUID id) {
         if (!farmRepository.existsById(id)) {
             throw new CustomException("Farm not found with id: " + id);
         }

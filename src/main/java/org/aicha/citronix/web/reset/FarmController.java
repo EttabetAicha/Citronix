@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/farms")
@@ -25,7 +26,7 @@ public class FarmController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FarmDto> getFarmById(@PathVariable Integer id) {
+    public ResponseEntity<FarmDto> getFarmById(@PathVariable UUID id) {
         FarmDto farm = farmService.getFarmById(id);
         return ResponseEntity.ok(farm);
     }
@@ -35,16 +36,21 @@ public class FarmController {
         FarmDto createdFarm = farmService.createFarm(farmDto);
         return ResponseEntity.ok(createdFarm);
     }
+    @PostMapping("/add-farm-with-fields")
+    public ResponseEntity<FarmDto> createFarmWithFields(@Valid @RequestBody FarmDto farmDto) {
+        FarmDto createdFarm = farmService.createFarmWithFields(farmDto);
+        return ResponseEntity.ok(createdFarm);
+    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FarmDto> updateFarm(@PathVariable Integer id, @Valid @RequestBody FarmDto farmDto) {
+    public ResponseEntity<FarmDto> updateFarm(@PathVariable UUID id, @Valid @RequestBody FarmDto farmDto) {
         farmDto.setId(id);
         FarmDto updatedFarm = farmService.updateFarm(farmDto);
         return ResponseEntity.ok(updatedFarm);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFarm(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteFarm(@PathVariable UUID id) {
         farmService.deleteFarm(id);
         return ResponseEntity.noContent().build();
     }

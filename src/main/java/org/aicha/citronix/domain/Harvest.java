@@ -1,13 +1,14 @@
 package org.aicha.citronix.domain;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.aicha.citronix.domain.enums.Season;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -18,7 +19,7 @@ import java.util.List;
 public class Harvest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -28,8 +29,13 @@ public class Harvest {
     private LocalDate harvestDate;
 
     @NotNull
+    @Positive
     private Double totalQuantity;
 
     @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
     private List<Sale> sales;
+
+    @ManyToOne
+    @JoinColumn(name = "tree_id")
+    private Tree tree;
 }
