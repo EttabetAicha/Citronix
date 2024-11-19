@@ -10,5 +10,4 @@ public interface FarmMapper {
     FarmDto toDto(Farm farm);
     Farm toEntity(FarmDto farmDto);
     FarmVM toVm(Farm farm);
-
 }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
+import java.time.LocalDate;
 
 @Setter
 @Getter
@@ -19,6 +20,9 @@ public class FarmDto {
 
     @NotBlank(message = "Location is mandatory")
     private String location;
+
+    @NotNull(message = "Creation date is mandatory")
+    private LocalDate creationDate;
 
     @NotNull(message = "Area is mandatory")
     @Positive(message = "Area must be positive")

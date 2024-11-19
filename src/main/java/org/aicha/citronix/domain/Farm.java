@@ -30,7 +30,7 @@ public class Farm {
 
     @NotNull
     private Double area;
-
+    @Column(name = "creationDate", nullable = false)
     @NotNull
     private LocalDate creationDate;
 
