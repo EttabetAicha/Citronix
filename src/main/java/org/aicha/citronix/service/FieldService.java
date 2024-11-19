@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,7 +45,7 @@ public class FieldService {
         return fields.stream().map(fieldMapper::toDto).collect(Collectors.toList());
     }
 
-    public FieldDto getFieldById(Integer id) {
+    public FieldDto getFieldById(UUID id) {
         Field field = fieldRepository.findById(id).orElseThrow(() -> new CustomException("Field not found with id: " + id));
         return fieldMapper.toDto(field);
     }
@@ -76,7 +77,7 @@ public class FieldService {
         }
     }
 
-    public void deleteField(Integer id) {
+    public void deleteField(UUID id) {
         if (!fieldRepository.existsById(id)) {
             throw new CustomException("Field not found with id: " + id);
         }
@@ -87,7 +88,7 @@ public class FieldService {
         }
     }
 
-    public List<FieldDto> findByFarmId(Integer farmId) {
+    public List<FieldDto> findByFarmId(UUID farmId) {
         List<Field> fields = fieldRepository.findByFarmId(farmId);
         if (fields.isEmpty()) {
             throw new CustomException("No fields found for the given farm id.");
@@ -107,7 +108,6 @@ public class FieldService {
         List<Farm> filteredFarms = farms.stream()
                 .filter(farm -> farm.getFields().stream().mapToDouble(Field::getArea).sum() < 4000)
                 .toList();
-
         if (filteredFarms.isEmpty()) {
             throw new CustomException("No farms found with field area greater than 4000.");
         }

@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/fields")
@@ -25,7 +26,7 @@ public class FieldController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FieldDto> getFieldById(@PathVariable Integer id) {
+    public ResponseEntity<FieldDto> getFieldById(@PathVariable UUID id) {
         FieldDto field = fieldService.getFieldById(id);
         return ResponseEntity.ok(field);
     }
@@ -37,20 +38,20 @@ public class FieldController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FieldDto> updateField(@PathVariable Integer id, @Valid @RequestBody FieldDto fieldDto) {
+    public ResponseEntity<FieldDto> updateField(@PathVariable UUID id, @Valid @RequestBody FieldDto fieldDto) {
         fieldDto.setId(id);
         FieldDto updatedField = fieldService.updateField(fieldDto);
         return ResponseEntity.ok(updatedField);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteField(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteField(@PathVariable UUID id) {
         fieldService.deleteField(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/farm/{farmId}")
-    public ResponseEntity<List<FieldDto>> getFieldsByFarmId(@PathVariable Integer farmId) {
+    public ResponseEntity<List<FieldDto>> getFieldsByFarmId(@PathVariable UUID farmId) {
         List<FieldDto> fields = fieldService.findByFarmId(farmId);
         return ResponseEntity.ok(fields);
     }

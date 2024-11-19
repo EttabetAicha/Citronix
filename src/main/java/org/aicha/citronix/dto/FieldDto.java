@@ -7,12 +7,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class FieldDto {
-    private Integer id;
+    private UUID id;
     @NotNull(message = "Area is mandatory")
     @Positive(message = "Area must be positive")
     private Double area;
