@@ -2,10 +2,7 @@ package org.aicha.citronix.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -13,14 +10,13 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class FieldDto {
     private UUID id;
     @NotNull(message = "Area is mandatory")
     @Positive(message = "Area must be positive")
     private Double area;
     @NotNull
-    private Integer farmId;
-
-
-
+    private UUID farmId;
 }

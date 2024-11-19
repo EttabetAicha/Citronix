@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Setter
@@ -28,4 +29,5 @@ public class FarmDto {
     @NotNull(message = "Area is mandatory")
     @Positive(message = "Area must be positive")
     private Double area;
+    private List<FieldDto> fields;
 }

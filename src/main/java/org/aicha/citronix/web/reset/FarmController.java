@@ -36,6 +36,11 @@ public class FarmController {
         FarmDto createdFarm = farmService.createFarm(farmDto);
         return ResponseEntity.ok(createdFarm);
     }
+    @PostMapping("/add-farm-with-fields")
+    public ResponseEntity<FarmDto> createFarmWithFields(@Valid @RequestBody FarmDto farmDto) {
+        FarmDto createdFarm = farmService.createFarmWithFields(farmDto);
+        return ResponseEntity.ok(createdFarm);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<FarmDto> updateFarm(@PathVariable UUID id, @Valid @RequestBody FarmDto farmDto) {
