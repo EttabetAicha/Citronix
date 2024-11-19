@@ -1,8 +1,8 @@
 package org.aicha.citronix.domain;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.aicha.citronix.domain.enums.Season;
 
@@ -29,8 +29,13 @@ public class Harvest {
     private LocalDate harvestDate;
 
     @NotNull
+    @Positive
     private Double totalQuantity;
 
     @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
     private List<Sale> sales;
+
+    @ManyToOne
+    @JoinColumn(name = "tree_id")
+    private Tree tree;
 }
