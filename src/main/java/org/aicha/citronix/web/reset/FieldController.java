@@ -1,6 +1,7 @@
 package org.aicha.citronix.web.reset;
 
 import jakarta.validation.Valid;
+import org.aicha.citronix.dto.FarmDto;
 import org.aicha.citronix.dto.FieldDto;
 import org.aicha.citronix.service.FieldService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +55,11 @@ public class FieldController {
     public ResponseEntity<List<FieldDto>> getFieldsByFarmId(@PathVariable UUID farmId) {
         List<FieldDto> fields = fieldService.findByFarmId(farmId);
         return ResponseEntity.ok(fields);
+    }
+
+    @PostMapping("/associate")
+    public ResponseEntity<FarmDto> associateFieldsToFarm(@Valid @RequestBody FarmDto farmDto) {
+        FarmDto updatedFarm = fieldService.associateFieldsToFarm(farmDto);
+        return ResponseEntity.ok(updatedFarm);
     }
 }
