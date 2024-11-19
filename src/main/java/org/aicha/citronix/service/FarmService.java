@@ -11,7 +11,7 @@ import org.aicha.citronix.exception.CustomException;
 import org.aicha.citronix.mapper.FarmMapper;
 import org.aicha.citronix.mapper.FieldMapper;
 import org.aicha.citronix.repository.FarmRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.aicha.citronix.repository.FieldRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,13 +21,20 @@ import java.util.stream.Collectors;
 @Service
 public class FarmService {
 
-    @Autowired
+
     private FarmRepository farmRepository;
 
-    @Autowired
+    private FieldRepository fieldRepository;
     private FarmMapper farmMapper;
-    @Autowired
+
     private FieldMapper fieldMapper;
+
+    public FarmService(FarmRepository farmRepository, FieldRepository fieldRepository, FarmMapper farmMapper, FieldMapper fieldMapper) {
+        this.farmRepository = farmRepository;
+        this.fieldRepository = fieldRepository;
+        this.farmMapper = farmMapper;
+        this.fieldMapper = fieldMapper;
+    }
 
     public List<FarmDto> getAllFarms() {
         List<Farm> farms = farmRepository.findAll();
@@ -46,9 +53,16 @@ public class FarmService {
             Farm farm = farmMapper.toEntity(farmDto);
             List<Field> fields = farmDto.getFields().stream()
                     .map(fieldDto -> {
-                        Field field = fieldMapper.toEntity(fieldDto);
-                        field.setFarm(farm);
-                        return field;
+                        if (fieldDto.getId() != null && fieldRepository.existsById(fieldDto.getId())) {
+                            Field existingField = fieldRepository.findById(fieldDto.getId())
+                                    .orElseThrow(() -> new CustomException("Field not found with id: " + fieldDto.getId()));
+                            existingField.setFarm(farm);
+                            return existingField;
+                        } else {
+                            Field field = fieldMapper.toEntity(fieldDto);
+                            field.setFarm(farm);
+                            return field;
+                        }
                     })
                     .collect(Collectors.toList());
             farm.setFields(fields);
@@ -57,7 +71,6 @@ public class FarmService {
             throw new CustomException("Failed to create farm with fields: " + e.getMessage());
         }
     }
-
     public FarmDto createFarm(FarmDto farmDto) {
         try {
             Farm farm = farmMapper.toEntity(farmDto);
