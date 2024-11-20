@@ -33,7 +33,12 @@ public class Sale {
     @NotNull
     private Double revenue;
 
+
     @ManyToOne
-    @JoinColumn(name = "harvest_id")
+    @JoinColumn(name = "harvest_id", nullable = false)
     private Harvest harvest;
+
+    public double calculateRevenue(double quantity) {
+        return quantity * unitPrice;
+    }
 }

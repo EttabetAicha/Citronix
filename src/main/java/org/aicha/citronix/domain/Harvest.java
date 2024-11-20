@@ -33,6 +33,8 @@ public class Harvest {
     private Double totalQuantity;
 
     @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
-    private List<Sale> sales;
+    private List<HarvestDetail> harvestDetails;
 
+    @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
+    private List<Sale> sales;
 }
