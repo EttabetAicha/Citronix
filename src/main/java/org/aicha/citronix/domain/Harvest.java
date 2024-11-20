@@ -35,7 +35,4 @@ public class Harvest {
     @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
     private List<Sale> sales;
 
-    @ManyToOne
-    @JoinColumn(name = "tree_id")
-    private Tree tree;
 }
