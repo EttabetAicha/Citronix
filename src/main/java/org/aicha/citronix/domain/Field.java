@@ -1,6 +1,7 @@
 package org.aicha.citronix.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -17,8 +18,10 @@ public class Field {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
-
     @NotNull
+    private String name;
+    @NotNull
+    @DecimalMin(value = "0.1", message = "The area must be at least 0.1 hectare")
     private Double area;
 
     @ManyToOne

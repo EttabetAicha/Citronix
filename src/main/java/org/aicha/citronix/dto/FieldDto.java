@@ -19,4 +19,6 @@ public class FieldDto {
     private Double area;
     @NotNull
     private UUID farmId;
+    @NotNull(message = "Name is mandatory")
+    private String name;
 }

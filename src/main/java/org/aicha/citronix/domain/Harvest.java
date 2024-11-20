@@ -33,9 +33,8 @@ public class Harvest {
     private Double totalQuantity;
 
     @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
-    private List<Sale> sales;
+    private List<HarvestDetail> harvestDetails;
 
-    @ManyToOne
-    @JoinColumn(name = "tree_id")
-    private Tree tree;
+    @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
+    private List<Sale> sales;
 }

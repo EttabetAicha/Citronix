@@ -37,4 +37,8 @@ public class Farm {
 
     @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL)
     private List<Field> fields;
+
+    public double getTotalArea() {
+        return fields.stream().mapToDouble(Field::getArea).sum();
+    }
 }
