@@ -50,8 +50,8 @@ public class FarmController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFarm(@PathVariable UUID id) {
+    public ResponseEntity<String> deleteFarm(@PathVariable UUID id) {
         farmService.deleteFarm(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("The farm was deleted successfully.");
     }
 }

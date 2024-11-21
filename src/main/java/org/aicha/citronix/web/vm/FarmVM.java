@@ -5,13 +5,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
+import java.util.UUID;
+
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class FarmVM {
-    private Integer id;
+    private UUID id;
 
     @NotBlank(message = "Name is mandatory")
     private String name;

@@ -16,10 +16,12 @@ import java.util.UUID;
 @Entity
 public class Field {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     @NotNull
     private String name;
+
     @NotNull
     @DecimalMin(value = "0.1", message = "The area must be at least 0.1 hectare")
     private Double area;
@@ -30,5 +32,4 @@ public class Field {
 
     @OneToMany(mappedBy = "field", cascade = CascadeType.ALL)
     private List<Tree> trees;
-
 }

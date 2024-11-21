@@ -13,6 +13,7 @@ import org.aicha.citronix.mapper.FieldMapper;
 import org.aicha.citronix.repository.FarmRepository;
 import org.aicha.citronix.repository.FieldRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -91,7 +92,7 @@ public class FarmService {
             throw new CustomException("Failed to update farm: " + e.getMessage());
         }
     }
-
+    @Transactional
     public void deleteFarm(UUID id) {
         if (!farmRepository.existsById(id)) {
             throw new CustomException("Farm not found with id: " + id);

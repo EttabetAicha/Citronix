@@ -8,7 +8,6 @@ import org.aicha.citronix.domain.Field;
 import org.aicha.citronix.dto.FarmDto;
 import org.aicha.citronix.dto.FieldDto;
 import org.aicha.citronix.exception.CustomException;
-import org.aicha.citronix.mapper.FarmMapper;
 import org.aicha.citronix.mapper.FieldMapper;
 import org.aicha.citronix.repository.FarmRepository;
 import org.aicha.citronix.repository.FieldRepository;
@@ -25,14 +24,12 @@ public class FieldService {
     private FieldRepository fieldRepository;
     private FarmRepository farmRepository;
     private FieldMapper fieldMapper;
-    private FarmMapper farmMapper;
     private Validator validator;
 
-    public FieldService(FieldRepository fieldRepository, FarmRepository farmRepository, FieldMapper fieldMapper, FarmMapper farmMapper, Validator validator) {
+    public FieldService(FieldRepository fieldRepository, FarmRepository farmRepository, FieldMapper fieldMapper, Validator validator) {
         this.fieldRepository = fieldRepository;
         this.farmRepository = farmRepository;
         this.fieldMapper = fieldMapper;
-        this.farmMapper = farmMapper;
         this.validator = validator;
     }
 
@@ -49,9 +46,9 @@ public class FieldService {
         return fieldMapper.toDto(field);
     }
 
-    public FieldDto createField(FieldDto fieldDto) {
+    public FieldDto createField(FieldDto fieldDto, UUID farmId) {
         validateFieldDto(fieldDto);
-        Farm farm = farmRepository.findById(fieldDto.getFarmId()).orElseThrow(() -> new CustomException("Farm not found with id: " + fieldDto.getFarmId()));
+        Farm farm = farmRepository.findById(farmId).orElseThrow(() -> new CustomException("Farm not found with id: " + farmId));
         try {
             Field field = fieldMapper.toEntity(fieldDto);
             field.setFarm(farm);
@@ -61,12 +58,12 @@ public class FieldService {
         }
     }
 
-    public FieldDto updateField(FieldDto fieldDto) {
+    public FieldDto updateField(FieldDto fieldDto, UUID farmId) {
         if (!fieldRepository.existsById(fieldDto.getId())) {
             throw new CustomException("Field not found with id: " + fieldDto.getId());
         }
         validateFieldDto(fieldDto);
-        Farm farm = farmRepository.findById(fieldDto.getFarmId()).orElseThrow(() -> new CustomException("Farm not found with id: " + fieldDto.getFarmId()));
+        Farm farm = farmRepository.findById(farmId).orElseThrow(() -> new CustomException("Farm not found with id: " + farmId));
         try {
             Field field = fieldMapper.toEntity(fieldDto);
             field.setFarm(farm);
@@ -95,41 +92,18 @@ public class FieldService {
         return fields.stream().map(fieldMapper::toDto).collect(Collectors.toList());
     }
 
+    public FarmDto associateFieldsToFarm(FarmDto farmDto) {
+        Farm farm = farmRepository.findById(farmDto.getId()).orElseThrow(() -> new CustomException("Farm not found with id: " + farmDto.getId()));
+        List<Field> fields = farmDto.getFields().stream().map(fieldMapper::toEntity).collect(Collectors.toList());
+        fields.forEach(field -> field.setFarm(farm));
+        fieldRepository.saveAll(fields);
+        return farmDto;
+    }
+
     private void validateFieldDto(FieldDto fieldDto) {
         Set<ConstraintViolation<FieldDto>> violations = validator.validate(fieldDto);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
-    }
-
-    public List<FarmDto> getFarmsWithFieldAreaGreaterThan4000() {
-        List<Farm> farms = farmRepository.findAll();
-        List<Farm> filteredFarms = farms.stream()
-                .filter(farm -> farm.getFields().stream().mapToDouble(Field::getArea).sum() < 4000)
-                .toList();
-        if (filteredFarms.isEmpty()) {
-            throw new CustomException("No farms found with field area greater than 4000.");
-        }
-        return filteredFarms.stream().map(farmMapper::toDto).collect(Collectors.toList());
-    }
-
-    public FarmDto associateFieldsToFarm(FarmDto farmDto) {
-        Farm farm = farmRepository.findById(farmDto.getId())
-                .orElseThrow(() -> new CustomException("Farm not found with id: " + farmDto.getId()));
-        List<Field> fields = farmDto.getFields().stream()
-                .map(fieldDto -> {
-                    Field field = fieldMapper.toEntity(fieldDto);
-                    field.setFarm(farm);
-                    return field;
-                })
-                .collect(Collectors.toList());
-
-        double totalFieldArea = fields.stream().mapToDouble(Field::getArea).sum();
-        if (totalFieldArea >= farm.getArea()) {
-            throw new CustomException("The total area of fields must be strictly less than the farm area.");
-        }
-
-        farm.setFields(fields);
-        return farmMapper.toDto(farmRepository.save(farm));
     }
 }

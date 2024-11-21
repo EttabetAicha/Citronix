@@ -33,15 +33,15 @@ public class FieldController {
     }
 
     @PostMapping
-    public ResponseEntity<FieldDto> createField(@Valid @RequestBody FieldDto fieldDto) {
-        FieldDto createdField = fieldService.createField(fieldDto);
+    public ResponseEntity<FieldDto> createField(@RequestParam UUID farmId, @Valid @RequestBody FieldDto fieldDto) {
+        FieldDto createdField = fieldService.createField(fieldDto, farmId);
         return ResponseEntity.ok(createdField);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FieldDto> updateField(@PathVariable UUID id, @Valid @RequestBody FieldDto fieldDto) {
+    public ResponseEntity<FieldDto> updateField(@PathVariable UUID id, @RequestParam UUID farmId, @Valid @RequestBody FieldDto fieldDto) {
         fieldDto.setId(id);
-        FieldDto updatedField = fieldService.updateField(fieldDto);
+        FieldDto updatedField = fieldService.updateField(fieldDto, farmId);
         return ResponseEntity.ok(updatedField);
     }
 
