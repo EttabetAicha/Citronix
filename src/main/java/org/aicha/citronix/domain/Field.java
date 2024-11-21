@@ -32,4 +32,27 @@ public class Field {
 
     @OneToMany(mappedBy = "field", cascade = CascadeType.ALL)
     private List<Tree> trees;
+    @Override
+    public String toString() {
+        return "Field{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", area=" + area +
+                ", farm=" + farm +
+                '}';
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Field field = (Field) o;
+
+        return id != null ? id.equals(field.id) : field.id == null;
+    }
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
 }

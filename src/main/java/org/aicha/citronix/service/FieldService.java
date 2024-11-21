@@ -83,6 +83,12 @@ public class FieldService {
             throw new CustomException("Failed to delete field: " + e.getMessage());
         }
     }
+    public void validateTotalFieldArea(Farm farm, List<Field> fields) {
+        double totalFieldArea = fields.stream().mapToDouble(Field::getArea).sum();
+        if (totalFieldArea >= farm.getArea()) {
+            throw new CustomException("The total area of fields must be strictly less than the area of the farm.");
+        }
+    }
 
     public List<FieldDto> findByFarmId(UUID farmId) {
         List<Field> fields = fieldRepository.findByFarmId(farmId);
@@ -93,13 +99,19 @@ public class FieldService {
     }
 
     public FarmDto associateFieldsToFarm(FarmDto farmDto) {
-        Farm farm = farmRepository.findById(farmDto.getId()).orElseThrow(() -> new CustomException("Farm not found with id: " + farmDto.getId()));
+        Farm farm = farmRepository.findById(farmDto.getId())
+                .orElseThrow(() -> new CustomException("Farm not found with id: " + farmDto.getId()));
         List<Field> fields = farmDto.getFields().stream().map(fieldMapper::toEntity).collect(Collectors.toList());
+        for (Field field : fields) {
+            if (field.getFarm() != null && field.getFarm().getId() != null && !field.getFarm().getId().equals(farm.getId())) {
+                throw new CustomException("Field with id: " + field.getId() + " is already associated with another farm.");
+            }
+        }
+        validateTotalFieldArea(farm, fields);
         fields.forEach(field -> field.setFarm(farm));
         fieldRepository.saveAll(fields);
         return farmDto;
     }
-
     private void validateFieldDto(FieldDto fieldDto) {
         Set<ConstraintViolation<FieldDto>> violations = validator.validate(fieldDto);
         if (!violations.isEmpty()) {
