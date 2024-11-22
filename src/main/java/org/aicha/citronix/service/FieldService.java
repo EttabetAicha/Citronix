@@ -8,6 +8,7 @@ import org.aicha.citronix.domain.Field;
 import org.aicha.citronix.dto.FarmDto;
 import org.aicha.citronix.dto.FieldDto;
 import org.aicha.citronix.exception.CustomException;
+import org.aicha.citronix.mapper.FarmMapper;
 import org.aicha.citronix.mapper.FieldMapper;
 import org.aicha.citronix.repository.FarmRepository;
 import org.aicha.citronix.repository.FieldRepository;
@@ -24,12 +25,14 @@ public class FieldService {
     private FieldRepository fieldRepository;
     private FarmRepository farmRepository;
     private FieldMapper fieldMapper;
+    private FarmMapper farmMapper;
     private Validator validator;
 
-    public FieldService(FieldRepository fieldRepository, FarmRepository farmRepository, FieldMapper fieldMapper, Validator validator) {
+    public FieldService(FieldRepository fieldRepository, FarmRepository farmRepository, FieldMapper fieldMapper, FarmMapper farmMapper, Validator validator) {
         this.fieldRepository = fieldRepository;
         this.farmRepository = farmRepository;
         this.fieldMapper = fieldMapper;
+        this.farmMapper=farmMapper;
         this.validator = validator;
     }
 
@@ -117,5 +120,15 @@ public class FieldService {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
+    }
+    public List<FarmDto> getFarmsWithFieldAreaGreaterThan4000() {
+        List<Farm> farms = farmRepository.findAll();
+        List<Farm> filteredFarms = farms.stream()
+                .filter(farm -> farm.getFields().stream().mapToDouble(Field::getArea).sum() < 4000)
+                .toList();
+        if (filteredFarms.isEmpty()) {
+            throw new CustomException("No farms found with field area greater than 4000.");
+        }
+        return filteredFarms.stream().map(farmMapper::toDto).collect(Collectors.toList());
     }
 }

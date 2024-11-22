@@ -4,7 +4,6 @@ import org.aicha.citronix.domain.Tree;
 import org.aicha.citronix.dto.TreeDto;
 import org.aicha.citronix.mapper.TreeMapper;
 import org.aicha.citronix.repository.TreeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,11 +14,14 @@ import java.util.stream.Collectors;
 @Service
 public class TreeService {
 
-    @Autowired
-    private TreeRepository treeRepository;
 
-    @Autowired
+    private TreeRepository treeRepository;
     private TreeMapper treeMapper;
+
+    public TreeService(TreeRepository treeRepository, TreeMapper treeMapper) {
+        this.treeRepository = treeRepository;
+        this.treeMapper = treeMapper;
+    }
 
     public List<TreeDto> getAllTrees() {
         return treeRepository.findAll().stream()

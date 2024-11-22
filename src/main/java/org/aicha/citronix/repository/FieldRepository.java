@@ -11,7 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface FieldRepository extends JpaRepository<Field, UUID> {
-
     @Query("SELECT f FROM Field f WHERE f.farm.id = :farmId")
     List<Field> findByFarmId(UUID farmId);
     Optional<Field> findById(UUID id);

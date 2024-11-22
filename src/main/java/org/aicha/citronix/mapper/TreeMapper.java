@@ -9,7 +9,6 @@ import org.mapstruct.Mapping;
 public interface TreeMapper {
     @Mapping(source = "field.id", target = "fieldId")
     TreeDto toDto(Tree tree);
-
-    @Mapping(target = "field", ignore = true)
+    @Mapping(source = "fieldId", target = "field.id")
     Tree toEntity(TreeDto treeDto);
 }

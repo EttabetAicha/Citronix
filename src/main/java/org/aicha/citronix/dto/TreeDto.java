@@ -3,6 +3,7 @@ package org.aicha.citronix.dto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
+import org.aicha.citronix.domain.enums.Status;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -22,4 +23,7 @@ public class TreeDto {
 
     @NotNull(message = "Field ID cannot be null")
     private UUID fieldId;
+
+    @NotNull(message = "Status cannot be null")
+    private Status status;
 }
