@@ -121,14 +121,5 @@ public class FieldService {
             throw new ConstraintViolationException(violations);
         }
     }
-    public List<FarmDto> getFarmsWithFieldAreaGreaterThan4000() {
-        List<Farm> farms = farmRepository.findAll();
-        List<Farm> filteredFarms = farms.stream()
-                .filter(farm -> farm.getFields().stream().mapToDouble(Field::getArea).sum() < 4000)
-                .toList();
-        if (filteredFarms.isEmpty()) {
-            throw new CustomException("No farms found with field area greater than 4000.");
-        }
-        return filteredFarms.stream().map(farmMapper::toDto).collect(Collectors.toList());
-    }
+
 }

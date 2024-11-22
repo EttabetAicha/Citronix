@@ -50,7 +50,14 @@ public class TreeService {
     }
 
     public void deleteTree(UUID id) {
-        treeRepository.deleteById(id);
+        if (!treeRepository.existsById(id)) {
+            throw new org.aicha.citronix.exception.CustomException("tree not found with id: " + id);
+        }
+        try {
+            treeRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new org.aicha.citronix.exception.CustomException("tree to delete field: " + e.getMessage());
+        }
     }
 
     public int getTreeAge(UUID id) {

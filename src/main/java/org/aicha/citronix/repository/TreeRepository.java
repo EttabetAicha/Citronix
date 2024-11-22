@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface TreeRepository extends JpaRepository<Tree, Integer> {
+public interface TreeRepository extends JpaRepository<Tree, UUID> {
 
     @Query("SELECT t FROM Tree t WHERE t.field.id = :fieldId")
     List<Tree> findByFieldId(UUID fieldId);
