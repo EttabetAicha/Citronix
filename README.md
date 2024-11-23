@@ -53,7 +53,7 @@
 ## 🛠️ Technologies Utilisées
 
 - **Framework** : Spring Boot
-- **Base de données** : MySQL
+- **Base de données** : Postgress
 - **Gestion des entités** : Lombok, Builder Pattern
 - **Validation des données** : Annotations Spring
 - **Tests** : JUnit, Mockito
