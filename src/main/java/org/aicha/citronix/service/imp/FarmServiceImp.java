@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,7 +42,7 @@ public class FarmServiceImp implements FarmService {
     @Override
     public Optional<Farm> findById(UUID id) {
         Optional<Farm> farm = farmRepository.findById(id);
-        if (!farm.isPresent()) {
+        if (farm.isEmpty()) {
             throw new FarmNotFoundException(id);
         }
         return farm;
@@ -52,36 +53,71 @@ public class FarmServiceImp implements FarmService {
         return farmRepository.findAll(pageable);
     }
 
+    @Transactional
     @Override
     public void delete(Farm farm) {
         if (farm.getFields() != null && !farm.getFields().isEmpty()) {
             for (Field field : farm.getFields()) {
+                field.setFarm(null);
                 fieldService.delete(field.getId());
             }
         }
         farmRepository.delete(farm);
     }
-
-
+    @Transactional
+    public Farm addFarmWithFields(Farm farm) {
+        validateFarm(farm);
+        fieldAreaSumCheck(farm);
+        Farm savedFarm = farmRepository.save(farm);
+        if (farm.getFields() != null) {
+            for (Field field : farm.getFields()) {
+                field.setFarm(savedFarm);
+            }
+            savedFarm.setFields(farm.getFields());
+        }
+        return farmRepository.save(savedFarm);
+    }
 
     @Override
-    public List<Farm> searchFarms(String name, String location, LocalDate startDate) {
+    public List<Farm> searchFarms(String name, String location, LocalDate creationDate) {
         if (name == null || name.trim().isEmpty()) {
             throw new InvalidFarmException("Farm name cannot be empty.");
         }
         if (location == null || location.trim().isEmpty()) {
             throw new InvalidFarmException("Farm location cannot be empty.");
         }
-        if (startDate == null) {
-            throw new InvalidFarmException("Start date cannot be null.");
-        }
-
         return farmRepository.findAll(
                 Specification
                         .where(FarmSpecification.nameContains(name))
                         .and(FarmSpecification.locationContains(location))
-                        .and(FarmSpecification.creationDateAfter(startDate))
+                        .and(FarmSpecification.creationDateAfter(creationDate))
         );
+    }
+    @Transactional
+    @Override
+    public Farm updateFarm(UUID id, Farm updatedFarm) {
+        Optional<Farm> existingFarmOpt = farmRepository.findById(id);
+
+        if (!existingFarmOpt.isPresent()) {
+            throw new FarmNotFoundException(id);
+        }
+        Farm existingFarm = existingFarmOpt.get();
+        existingFarm.setName(updatedFarm.getName());
+        existingFarm.setLocation(updatedFarm.getLocation());
+        existingFarm.setArea(updatedFarm.getArea());
+        existingFarm.setCreationDate(updatedFarm.getCreationDate());
+        List<Field> existingFields = existingFarm.getFields();
+        List<Field> updatedFields = updatedFarm.getFields();
+        existingFields.removeIf(field -> !updatedFields.contains(field));
+        for (Field field : updatedFields) {
+            if (!existingFields.contains(field)) {
+                field.setFarm(existingFarm);
+                existingFields.add(field);
+            }
+        }
+
+        existingFarm.setFields(existingFields);
+        return farmRepository.save(existingFarm);
     }
 
     private void validateFarm(Farm farm) {
@@ -101,6 +137,7 @@ public class FarmServiceImp implements FarmService {
             throw new InvalidFarmException("Creation date cannot be in the future.");
         }
     }
+
 
     private void fieldAreaSumCheck(Farm farm) {
         if (farm.getFields() != null && !farm.getFields().isEmpty()) {

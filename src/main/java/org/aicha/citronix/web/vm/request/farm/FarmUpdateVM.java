@@ -3,8 +3,10 @@ package org.aicha.citronix.web.vm.request.farm;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.aicha.citronix.domain.Field;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class FarmUpdateVM {
@@ -22,4 +24,6 @@ public class FarmUpdateVM {
 
     @NotNull(message = "Creation date is required")
     private LocalDate creationDate;
+
+    private List<Field> fields;
 }

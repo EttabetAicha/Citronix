@@ -19,10 +19,10 @@ public class FarmSpecification {
                 ? cb.like(cb.lower(root.get("location")), "%"+location.toLowerCase()+"%")
                 : null;
     }
-    public static Specification<Farm> creationDateAfter(LocalDate startDate) {
+    public static Specification<Farm> creationDateAfter(LocalDate creationDate) {
         return (root, query, cb) ->
-                startDate != null
-                        ? cb.greaterThanOrEqualTo(root.get("creationDate"), startDate)
+                creationDate != null
+                        ? cb.greaterThanOrEqualTo(root.get("creationDate"), creationDate)
                         : null;
     }
 }

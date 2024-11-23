@@ -1,23 +1,19 @@
 package org.aicha.citronix.web.vm.request.farm;
 
-
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 import java.time.LocalDate;
 
-@Setter
-@Getter
+@Data
 public class FarmSearchVM {
+    @NotBlank(message = "Name is required")
+    private String name;
 
-    public String name;
-    public String location;
-    public LocalDate date;
+    @NotBlank(message = "Location is required")
+    private String location;
 
-    public FarmSearchVM(String name, String location, LocalDate date) {
-        this.name = name;
-        this.location = location;
-        this.date = date;
-    }
-
+    @NotNull(message = "Date is required")
+    private LocalDate creationDate;
 }

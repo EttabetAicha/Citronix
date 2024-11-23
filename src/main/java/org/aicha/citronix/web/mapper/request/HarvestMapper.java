@@ -10,10 +10,11 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface HarvestMapper {
 
-    @Mapping(target = "farm.id", source = "farmId")
-    @Mapping(target = "season", expression = "java(com.spring.citronix.domain.enums.Season.valueOf(harvestCreateVM.getSeason()))")
+    @Mapping(target = "tree.id", source = "treeId")
+    @Mapping(target = "season", expression = "java(org.aicha.citronix.domain.enums.Season.valueOf(harvestCreateVM.getSeason()))")
     Harvest toEntity(@Valid HarvestCreateVM harvestCreateVM);
 
     @Mapping(target = "season", expression = "java(harvest.getSeason().name())")
+    @Mapping(target = "treeId", source = "tree.id")
     HarvestResponseVM toResponseVM(Harvest harvest);
 }

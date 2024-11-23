@@ -30,7 +30,7 @@ public class Harvest {
     private double totalQuantity;
 
     @ManyToOne
-    private Farm farm;
+    private Tree tree;
 
     @OneToMany(mappedBy = "harvest",fetch = FetchType.EAGER)
     private List<HarvestDetail> harvestDetails;

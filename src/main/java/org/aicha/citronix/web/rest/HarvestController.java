@@ -1,11 +1,11 @@
 package org.aicha.citronix.web.rest;
 
 import jakarta.validation.Valid;
-import org.aicha.citronix.domain.Farm;
 import org.aicha.citronix.domain.Harvest;
+import org.aicha.citronix.domain.Tree;
 import org.aicha.citronix.domain.enums.Season;
 import org.aicha.citronix.service.HarvestService;
-import org.aicha.citronix.service.imp.FarmServiceImp;
+import org.aicha.citronix.service.TreeService;
 import org.aicha.citronix.web.errors.harvest.HarvestNotFoundException;
 import org.aicha.citronix.web.mapper.request.HarvestMapper;
 import org.aicha.citronix.web.vm.request.harvest.HarvestCreateVM;
@@ -21,25 +21,24 @@ import java.util.UUID;
 public class HarvestController {
     private final HarvestService harvestService;
     private final HarvestMapper harvestMapper;
-    private final FarmServiceImp farmServiceImp;
+    private final TreeService treeService;
 
-    public HarvestController(HarvestService harvestService, HarvestMapper harvestMapper, FarmServiceImp farmServiceImp) {
+    public HarvestController(HarvestService harvestService, HarvestMapper harvestMapper, TreeService treeService) {
         this.harvestService = harvestService;
         this.harvestMapper = harvestMapper;
-        this.farmServiceImp = farmServiceImp;
+        this.treeService = treeService;
     }
 
-
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Harvest> saveHarvest(@Valid @RequestBody HarvestCreateVM harvestDTO) {
-        Farm farm = farmServiceImp.findById(harvestDTO.getFarmId())
-                .orElseThrow(() -> new IllegalArgumentException("Farm not found"));
+        Tree tree = treeService.findById(harvestDTO.getTreeId())
+                .orElseThrow(() -> new IllegalArgumentException("Tree not found"));
 
         Harvest harvest = new Harvest();
         harvest.setSeason(Season.valueOf(harvestDTO.getSeason()));
         harvest.setHarvestDate(harvestDTO.getHarvestDate());
         harvest.setTotalQuantity(harvestDTO.getTotalQuantity());
-        harvest.setFarm(farm);
+        harvest.setTree(tree);
         Harvest savedHarvest = harvestService.save(harvest);
 
         return ResponseEntity.ok(savedHarvest);
@@ -52,9 +51,9 @@ public class HarvestController {
         return ResponseEntity.ok(harvestMapper.toResponseVM(harvest));
     }
 
-    @GetMapping("/farm/{farmId}")
-    public List<HarvestResponseVM> getHarvestsByFarm(@PathVariable UUID farmId) {
-        return harvestService.findByFarmId(farmId)
+    @GetMapping("/tree/{treeId}")
+    public List<HarvestResponseVM> getHarvestsByTree(@PathVariable UUID treeId) {
+        return harvestService.findByTreeId(treeId)
                 .stream()
                 .map(harvestMapper::toResponseVM)
                 .toList();

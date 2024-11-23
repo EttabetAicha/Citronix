@@ -20,11 +20,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/farm")
+@RequestMapping("/api/farms")
 public class FarmController {
 
-    private  FarmService farmService;
-    private  FarmMapper farmMapper;
+    private final FarmService farmService;
+    private final FarmMapper farmMapper;
 
     public FarmController(FarmService farmService, FarmMapper farmMapper) {
         this.farmService = farmService;
@@ -46,6 +46,21 @@ public class FarmController {
 
         return farmService.save(farmDTO);
     }
+    @PostMapping("/createWithFields")
+    public Farm createFarmWithFields(@RequestBody @Valid Farm farmDTO) {
+        if (farmDTO.getFields() != null) {
+            List<Field> fields = farmDTO.getFields().stream().map(listField -> {
+                Field field = new Field();
+                field.setArea(listField.getArea());
+                field.setFarm(farmDTO);
+                return field;
+            }).collect(Collectors.toList());
+
+            farmDTO.setFields(fields);
+        }
+
+        return farmService.addFarmWithFields(farmDTO);
+    }
 
     @GetMapping("/findById/{id}")
     public ResponseEntity<Farm> findById(@PathVariable UUID id) {
@@ -54,7 +69,7 @@ public class FarmController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/findAll")
+    @GetMapping
     public Page<Farm> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return farmService.findAll(pageable);
@@ -78,9 +93,20 @@ public class FarmController {
             return ResponseEntity.notFound().build();
         }
         Farm existingFarm = existingFarmOpt.get();
-        Farm updatedFarm = farmMapper.toEntity(farmUpdateVM);
-        updatedFarm.setId(id);
-        Farm savedFarm = farmService.save(updatedFarm);
+        existingFarm.setName(farmUpdateVM.getName());
+        existingFarm.setLocation(farmUpdateVM.getLocation());
+        existingFarm.setArea(farmUpdateVM.getArea());
+
+        if (farmUpdateVM.getFields() != null) {
+            // Clear the existing fields and add the new ones
+            existingFarm.getFields().clear();
+            for (Field field : farmUpdateVM.getFields()) {
+                field.setFarm(existingFarm); // Set the farm for each field
+                existingFarm.getFields().add(field);
+            }
+        }
+
+        Farm savedFarm = farmService.save(existingFarm);
         return ResponseEntity.ok(savedFarm);
     }
 
@@ -89,7 +115,7 @@ public class FarmController {
         List<Farm> farms = farmService.searchFarms(
                 farmSearch.getName(),
                 farmSearch.getLocation(),
-                farmSearch.getDate()
+                farmSearch.getCreationDate()
         );
         return ResponseEntity.ok(farms);
     }

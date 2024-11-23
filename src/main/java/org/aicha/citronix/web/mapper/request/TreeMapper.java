@@ -14,5 +14,6 @@ public interface TreeMapper {
 
     @Mapping(target = "age", expression = "java(tree.calculateAge())")
     @Mapping(target = "productivity", expression = "java(tree.calculateProductivity())")
+    @Mapping(target = "field", source = "field")
     TreeResponseVM toResponseVM(Tree tree);
 }

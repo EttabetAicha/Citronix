@@ -1,21 +1,18 @@
 package org.aicha.citronix.service.imp;
 
-import org.aicha.citronix.domain.Harvest;
 import org.aicha.citronix.domain.HarvestDetail;
-import org.aicha.citronix.domain.Tree;
 import org.aicha.citronix.repository.HarvestDetailRepository;
 import org.aicha.citronix.repository.HarvestRepository;
 import org.aicha.citronix.repository.TreeRepository;
 import org.aicha.citronix.web.vm.request.harvest.HarvestDetailCreateVM;
 import org.aicha.citronix.web.vm.response.harvest.HarvestDetailResponse;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class HarvestDetailService {
 
     private final HarvestDetailRepository harvestDetailRepository;
@@ -29,14 +26,11 @@ public class HarvestDetailService {
     }
 
     public HarvestDetailResponse createHarvestDetail(HarvestDetailCreateVM request) {
-        Harvest harvest = harvestRepository.findById(request.getHarvestId())
-                .orElseThrow(() -> new IllegalArgumentException("Harvest not found with ID: " + request.getHarvestId()));
-
-        Tree tree = treeRepository.findById(request.getTreeId())
-                .orElseThrow(() -> new IllegalArgumentException("Tree not found with ID: " + request.getTreeId()));
         HarvestDetail harvestDetail = new HarvestDetail();
-        harvestDetail.setHarvest(harvest);
-        harvestDetail.setTree(tree);
+        harvestDetail.setHarvest(harvestRepository.findById(request.getHarvestId())
+                .orElseThrow(() -> new IllegalArgumentException("Harvest not found with ID: " + request.getHarvestId())));
+        harvestDetail.setTree(treeRepository.findById(request.getTreeId())
+                .orElseThrow(() -> new IllegalArgumentException("Tree not found with ID: " + request.getTreeId())));
         harvestDetail.setQuantity(request.getQuantity());
 
         HarvestDetail savedDetail = harvestDetailRepository.save(harvestDetail);
@@ -48,10 +42,25 @@ public class HarvestDetailService {
         );
     }
 
-    public List<HarvestDetail> getHarvestDetailsByHarvestId(UUID harvestId) {
-        return harvestDetailRepository.findByHarvestId(harvestId);
+    public List<HarvestDetailResponse> getHarvestDetailsByHarvestId(UUID harvestId) {
+        return harvestDetailRepository.findByHarvestId(harvestId).stream()
+                .map(detail -> new HarvestDetailResponse(
+                        detail.getId(),
+                        detail.getHarvest().getId(),
+                        detail.getTree().getId(),
+                        detail.getQuantity()
+                ))
+                .collect(Collectors.toList());
     }
-    public List<HarvestDetail> getHarvestDetailsByTreeId(UUID treeId) {
-        return harvestDetailRepository.findByTreeId(treeId);
+
+    public List<HarvestDetailResponse> getHarvestDetailsByTreeId(UUID treeId) {
+        return harvestDetailRepository.findByTreeId(treeId).stream()
+                .map(detail -> new HarvestDetailResponse(
+                        detail.getId(),
+                        detail.getHarvest().getId(),
+                        detail.getTree().getId(),
+                        detail.getQuantity()
+                ))
+                .collect(Collectors.toList());
     }
 }

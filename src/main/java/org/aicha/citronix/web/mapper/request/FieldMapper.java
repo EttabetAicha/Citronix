@@ -1,6 +1,5 @@
 package org.aicha.citronix.web.mapper.request;
 
-
 import org.aicha.citronix.domain.Field;
 import org.aicha.citronix.web.vm.request.field.FieldCreateVM;
 import org.mapstruct.Mapper;

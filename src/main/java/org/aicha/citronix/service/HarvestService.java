@@ -1,7 +1,5 @@
 package org.aicha.citronix.service;
 
-
-
 import org.aicha.citronix.domain.Harvest;
 import org.aicha.citronix.domain.enums.Season;
 
@@ -16,11 +14,11 @@ public interface HarvestService {
 
     List<Harvest> findAll();
 
-    List<Harvest> findByFarmId(UUID farmId);
+    List<Harvest> findByTreeId(UUID treeId);
 
     void delete(Harvest harvest);
 
-    boolean isSeasonAvailable(UUID farmId, String season);
+    boolean isSeasonAvailable(UUID treeId, String season);
 
     List<Harvest> getHarvestsBySeason(Season season);
 }

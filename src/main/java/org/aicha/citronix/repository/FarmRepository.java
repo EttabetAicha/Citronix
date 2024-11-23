@@ -12,6 +12,5 @@ import java.util.UUID;
 @Repository
 public interface FarmRepository extends JpaRepository<Farm, UUID>, JpaSpecificationExecutor<Farm> {
     Optional<Farm> findById(UUID id);
-
     void delete(Farm farm);
 }

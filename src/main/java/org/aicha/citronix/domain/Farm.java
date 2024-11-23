@@ -1,6 +1,7 @@
 package org.aicha.citronix.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
@@ -39,7 +40,8 @@ public class Farm {
     @PastOrPresent(message = "Creation date cannot be in the future")
     private LocalDate creationDate;
 
-    @OneToMany
+    @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Field> fields= new ArrayList<>();
 
     public boolean isValidArea(double fieldAreaSum) {

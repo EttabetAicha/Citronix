@@ -1,6 +1,7 @@
 package org.aicha.citronix.service.imp;
 
 import jakarta.validation.Valid;
+import org.aicha.citronix.domain.Farm;
 import org.aicha.citronix.domain.Field;
 import org.aicha.citronix.domain.Tree;
 import org.aicha.citronix.repository.TreeRepository;
@@ -60,6 +61,7 @@ public class TreeServiceImpl implements TreeService {
 
     private void validateTree(Tree tree) {
         Field field = tree.getField();
+        Farm farm = field.getFarm();
 
         List<Tree> existingTrees = treeRepository.findByFieldId(field.getId());
 
@@ -74,6 +76,9 @@ public class TreeServiceImpl implements TreeService {
         }
         if (tree.calculateAge() > 20) {
             throw new IllegalArgumentException("Tree is beyond its productive age (20 years) and cannot be added.");
+        }
+        if (tree.getPlantingDate().isBefore(farm.getCreationDate())) {
+            throw new IllegalArgumentException("Tree planting date cannot be before the farm's creation date.");
         }
     }
 }

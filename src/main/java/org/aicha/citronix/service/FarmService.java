@@ -1,6 +1,7 @@
 package org.aicha.citronix.service;
 
 
+import jakarta.validation.Valid;
 import org.aicha.citronix.domain.Farm;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,11 @@ public interface FarmService {
     void delete(Farm farm);
 
     List<Farm> searchFarms(String name, String location, LocalDate startDate);
+
+    Farm addFarmWithFields(@Valid Farm farmDTO);
+    Farm updateFarm(UUID id, Farm updatedFarm);
+
+
+
+
 }

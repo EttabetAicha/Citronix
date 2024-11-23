@@ -18,5 +18,5 @@ public class HarvestCreateVM {
     private double totalQuantity;
 
     @NotNull
-    private UUID farmId;
+    private UUID treeId;
 }

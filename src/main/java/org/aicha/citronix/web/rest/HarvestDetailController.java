@@ -1,6 +1,5 @@
 package org.aicha.citronix.web.rest;
 
-import org.aicha.citronix.domain.HarvestDetail;
 import org.aicha.citronix.service.imp.HarvestDetailService;
 import org.aicha.citronix.web.vm.request.harvest.HarvestDetailCreateVM;
 import org.aicha.citronix.web.vm.response.harvest.HarvestDetailResponse;
@@ -27,12 +26,12 @@ public class HarvestDetailController {
     }
 
     @GetMapping("/harvest/{harvestId}")
-    public ResponseEntity<List<HarvestDetail>> getHarvestDetailsByHarvestId(@PathVariable UUID harvestId) {
+    public ResponseEntity<List<HarvestDetailResponse>> getHarvestDetailsByHarvestId(@PathVariable UUID harvestId) {
         return ResponseEntity.ok(harvestDetailService.getHarvestDetailsByHarvestId(harvestId));
     }
 
     @GetMapping("/tree/{treeId}")
-    public ResponseEntity<List<HarvestDetail>> getHarvestDetailsByTreeId(@PathVariable UUID treeId) {
+    public ResponseEntity<List<HarvestDetailResponse>> getHarvestDetailsByTreeId(@PathVariable UUID treeId) {
         return ResponseEntity.ok(harvestDetailService.getHarvestDetailsByTreeId(treeId));
     }
 }

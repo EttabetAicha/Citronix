@@ -1,6 +1,6 @@
 package org.aicha.citronix.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -27,7 +27,7 @@ public class Field {
     private Farm farm;
 
     @OneToMany(mappedBy = "field")
-    @JsonIgnoreProperties({"field"})
+    @JsonIgnore
     private List<Tree> trees;
 
     public boolean isTreeDensityValid(int numberOfTrees) {

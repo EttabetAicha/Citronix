@@ -16,5 +16,5 @@ public class HarvestResponseVM {
     private String season;
     private LocalDate harvestDate;
     private double totalQuantity;
-    private UUID farmId;
+    private UUID treeId;
 }

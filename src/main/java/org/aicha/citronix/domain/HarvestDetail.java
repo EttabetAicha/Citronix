@@ -25,5 +25,6 @@ public class HarvestDetail {
 
     @ManyToOne
     @JoinColumn(name = "harvest_id")
+
     private Harvest harvest;
 }
