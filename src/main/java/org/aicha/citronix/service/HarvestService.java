@@ -1,48 +1,24 @@
 package org.aicha.citronix.service;
 
-import jakarta.validation.Valid;
 import org.aicha.citronix.domain.Harvest;
 import org.aicha.citronix.domain.enums.Season;
-import org.aicha.citronix.repository.HarvestRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
-public class HarvestService {
+public interface HarvestService {
+    Harvest save(Harvest harvest);
 
-    private final HarvestRepository harvestRepository;
+    Optional<Harvest> findById(UUID id);
 
-    public HarvestService(HarvestRepository harvestRepository) {
-        this.harvestRepository = harvestRepository;
-    }
+    List<Harvest> findAll();
 
-    public Harvest save(@Valid Harvest harvest) {
-        if (!isSeasonAvailable(harvest.getSeason().toString())) {
-            throw new org.aicha.citronix.exception.CustomException("A harvest for this season already exists.");
-        }
-        return harvestRepository.save(harvest);
-    }
+    List<Harvest> findByTreeId(UUID treeId);
 
-    public Optional<Harvest> findById(UUID id) {
-        return harvestRepository.findById(id);
-    }
+    void delete(Harvest harvest);
 
-    public List<Harvest> findAll() {
-        return harvestRepository.findAll();
-    }
+    boolean isSeasonAvailable(UUID treeId, String season);
 
-    public void delete(Harvest harvest) {
-        harvestRepository.delete(harvest);
-    }
-
-    public boolean isSeasonAvailable(String season) {
-        return harvestRepository.findBySeason(Season.valueOf(season)).isEmpty();
-    }
-
-    public List<Harvest> getHarvestsBySeason(Season season) {
-        return harvestRepository.findBySeason(season);
-    }
+    List<Harvest> getHarvestsBySeason(Season season);
 }

@@ -1,12 +1,15 @@
 package org.aicha.citronix.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,27 +21,30 @@ import java.util.UUID;
 @Entity
 public class Farm {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
-    @NotNull
-    @Size(min = 2, max = 100)
+    @Column(nullable = false)
+    @NotBlank(message = "Farm name is required")
     private String name;
 
-    @NotNull
-    @Size(min = 2, max = 200)
+    @Column(nullable = false)
+    @NotBlank(message = "Farm location is required")
     private String location;
 
-    @NotNull
-    private Double area;
-    @Column(name = "creation_date", nullable = false)
-    @NotNull
+    @Column(nullable = false)
+    @Positive(message = "Farm area must be greater than zero")
+    private double area;
+
+    @Column(nullable = false)
+    @PastOrPresent(message = "Creation date cannot be in the future")
     private LocalDate creationDate;
 
-    @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL)
-    private List<Field> fields;
+    @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Field> fields= new ArrayList<>();
 
-    public double getTotalArea() {
-        return fields.stream().mapToDouble(Field::getArea).sum();
+    public boolean isValidArea(double fieldAreaSum) {
+        return fieldAreaSum < this.area;
     }
 }

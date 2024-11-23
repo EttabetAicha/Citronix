@@ -1,10 +1,8 @@
 package org.aicha.citronix.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Setter
@@ -15,24 +13,23 @@ import java.util.UUID;
 @Entity
 public class Sale {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NotNull
-    private LocalDate saleDate;
+    @Column(nullable = false)
+    private java.time.LocalDate date;
 
-    @NotNull
-    private Double unitPrice;
+    @Column(nullable = false)
+    private double unitPrice;
 
-    @NotNull
-    private String clientName;
+    @Column(nullable = false)
+    private String client;
 
-    @NotNull
-    private Double quantitySold;
+    @Column(nullable = false)
+    private double revenue;
 
-    @NotNull
-    private Double revenue;
-
+    @Column(nullable = false)
+    private double quantity;
 
     @ManyToOne
     @JoinColumn(name = "harvest_id", nullable = false)

@@ -1,8 +1,6 @@
 package org.aicha.citronix.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.aicha.citronix.domain.enums.Season;
 
@@ -18,23 +16,25 @@ import java.util.UUID;
 @Entity
 public class Harvest {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @Column(nullable = false)
     private Season season;
 
-    @NotNull
+    @Column(nullable = false)
     private LocalDate harvestDate;
 
-    @NotNull
-    @Positive
-    private Double totalQuantity;
+    @Column(nullable = false)
+    private double totalQuantity;
 
-    @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
+    @ManyToOne
+    private Tree tree;
+
+    @OneToMany(mappedBy = "harvest",fetch = FetchType.EAGER)
     private List<HarvestDetail> harvestDetails;
 
-    @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "harvest")
     private List<Sale> sales;
 }

@@ -1,7 +1,6 @@
 package org.aicha.citronix.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.UUID;
@@ -15,17 +14,17 @@ import java.util.UUID;
 @Entity
 public class HarvestDetail {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
-    @NotNull
-    private Double quantity;
+    @Column(nullable = false)
+    private double quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "tree_id")
+    @ManyToOne(optional = false)
     private Tree tree;
 
     @ManyToOne
     @JoinColumn(name = "harvest_id")
+
     private Harvest harvest;
 }
