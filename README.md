@@ -76,8 +76,8 @@
 ### **Prérequis**
 - **Java 17+**
 - **Maven** ou **Gradle**
-- **MySQL**
-
+- **Postgress**
+- **liquibase**
 ### **Étapes d’Installation**
 1. Clonez le dépôt :
    ```bash
